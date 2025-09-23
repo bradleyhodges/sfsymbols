@@ -1,0 +1,14 @@
+import type { IconDefinition } from "@advena/sfsymbols-types";
+declare const iconName: IconDefinition["iconName"];
+declare const sourceName: IconDefinition["sourceName"];
+declare const family: IconDefinition["family"];
+declare const style: IconDefinition["style"];
+declare const width: IconDefinition["width"];
+declare const height: IconDefinition["height"];
+declare const viewBox: IconDefinition["viewBox"];
+declare const categories: IconDefinition["categories"];
+declare const svgPathData: IconDefinition["svgPathData"];
+declare const variants: IconDefinition["variants"];
+declare const keywords: IconDefinition["keywords"];
+export declare const sfCharacterSutton: IconDefinition;
+export { iconName, sourceName, family, style, width, height, viewBox, categories, svgPathData, variants, keywords };

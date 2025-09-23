@@ -1,0 +1,61 @@
+{
+  "name": "@bradleyhodges/sfsymbols",
+  "description": "Apple's SF Symbols icons for React applications.",
+  "version": "7.0.4",
+  "main": "dist/main/index.js",
+  "module": "dist/module/index.js",
+  "scripts": {
+    "build-icons": "node build/scripts/buildIcons.js",
+    "build": "node build/scripts/build.js",
+        "pub": "npm publish --access public --no-git-checks",
+        "bump-deps": "npx npm-check-updates --deep -u && pnpm up --latest --recursive && pnpm run format",
+    "format": "biome check . --write --skip-errors",
+    "clean": "git clean -xdf .cache .turbo node_modules -f",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/module/index.js",
+      "require": "./dist/main/index.js"
+    },
+    "./categories": {
+      "import": "./dist/module/_categories.js",
+      "require": "./dist/main/_categories.js"
+    }
+  },
+  "repository": "https://github.com/bradleyhodges/sfsymbols",
+  "bugs": {
+    "url": "https://github.com/bradleyhodges/sfsymbols/issues"
+  },
+  "author": "Bradley Hodges",
+  "devDependencies": {
+    "@types/node": "22.10.5",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "19.1.6",
+    "@biomejs/biome": "1.9.4",
+    "chalk": "4.1.2",
+    "decompress": "^4.2.1",
+    "esbuild": "^0.24.2",
+    "inquirer": "^12.6.3",
+    "jsonminify": "^0.4.2",
+    "node-7z": "^3.0.0",
+    "node-html-parser": "^7.0.1",
+    "ora": "^8.2.0",
+    "svgo": "^4.0.0",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3",
+    "uglify-js": "^3.19.3",
+    "uglifyjs-folder": "^3.3.0"
+  },
+  "dependencies": {
+    "@bradleyhodges/sfsymbols-types": "7.0.4"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist/**",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ]
+}

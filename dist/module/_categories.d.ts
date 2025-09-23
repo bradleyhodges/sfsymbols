@@ -1,0 +1,36 @@
+declare let uniqueCategories: {
+    key: string;
+    name: string;
+}[], categoryMappings: {
+    whats_new: string[];
+    brands: string[];
+    draw: string[];
+    communication: string[];
+    weather: string[];
+    maps: string[];
+    objects__tools: string[];
+    devices: string[];
+    camera__photos: string[];
+    gaming: string[];
+    connectivity: string[];
+    transport: string[];
+    automotive: string[];
+    accessibility: string[];
+    privacy__security: string[];
+    human: string[];
+    home: string[];
+    fitness: string[];
+    nature: string[];
+    editing: string[];
+    text_formatting: string[];
+    media: string[];
+    keyboard: string[];
+    commerce: string[];
+    time: string[];
+    health: string[];
+    shapes: string[];
+    arrows: string[];
+    indicies: string[];
+    maths: string[];
+};
+export { uniqueCategories, categoryMappings };
