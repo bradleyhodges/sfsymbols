@@ -8,6 +8,8 @@ SF Symbols is a library of over 6,900 symbols that are designed to integrate sea
 This package has been built using the latest icons from **Version 7.0 (beta)** – SF Font Version `20.0d10e1`.
 
 ## Usage
+For simplicity, **I've created a basic icon browser for this package, which you can access here: [bradleyhodges-sfsymbols.vercel.app](https://bradleyhodges-sfsymbols.vercel.app)**
+
 You will need to install the following packages to use the icons in your project:
 
 - `@bradleyhodges/sfsymbols` – Contains the actual icons.
