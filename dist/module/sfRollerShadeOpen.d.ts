@@ -1,4 +1,4 @@
-import type { IconDefinition } from "@advena/sfsymbols-types";
+import type { IconDefinition } from "@bradleyhodges/sfsymbols-types";
 declare const iconName: IconDefinition["iconName"];
 declare const sourceName: IconDefinition["sourceName"];
 declare const family: IconDefinition["family"];

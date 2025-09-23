@@ -226,7 +226,7 @@ const updateAllPackageVersions = async (version) => {
                         dependency,
                         dependencyVersion,
                     ] of Object.entries(packageJson.dependencies)) {
-                        if (dependency.startsWith("@advena/sfsymbols")) {
+                        if (dependency.startsWith("@bradleyhodges/sfsymbols")) {
                             const currentVersion =
                                 packageJson.dependencies[dependency];
 
@@ -294,10 +294,10 @@ const build = async () => {
     }
 
     // Update version in version.ts
-    spinner.start("Updating @advena/sfsymbols package versions...");
+    spinner.start("Updating @bradleyhodges/sfsymbols package versions...");
     await updateAllPackageVersions(version);
     spinner.succeed(
-        `Updated @advena/sfsymbols package versions to new version ${version}`,
+        `Updated @bradleyhodges/sfsymbols package versions to new version ${version}`,
     );
 
     // Clean the dist directory

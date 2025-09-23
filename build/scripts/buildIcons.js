@@ -187,7 +187,7 @@ function processSvg(filePath, outputFileName) {
     const keywords = populateGenericAliases(iconName, iconAliases);
 
     // Generate the output TypeScript file content
-    const outputContent = `import type { IconDefinition } from "@advena/sfsymbols-types";
+    const outputContent = `import type { IconDefinition } from "@bradleyhodges/sfsymbols-types";
 const iconName: IconDefinition["iconName"] = "${iconName}";
 const sourceName: IconDefinition["sourceName"] = "${baseName}";
 const family: IconDefinition["family"] = "${family}";
@@ -289,7 +289,7 @@ function processBrandSvg(filePath, fileName) {
     const categories = [toCategoryId("Brands")];
 
     // Generate output TypeScript content
-    const outputContent = `import type { IconDefinition } from "@advena/sfsymbols-types";
+    const outputContent = `import type { IconDefinition } from "@bradleyhodges/sfsymbols-types";
 const iconName: IconDefinition["iconName"] = "${iconName}";
 const sourceName: IconDefinition["sourceName"] = "${baseName}";
 const family: IconDefinition["family"] = "${family}";
