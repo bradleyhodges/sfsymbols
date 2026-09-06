@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@bradleyhodges/sfsymbols-types':
-        specifier: 8.0.3
-        version: 8.0.3
+        specifier: 8.0.4
+        version: 8.0.4
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -134,8 +134,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@bradleyhodges/sfsymbols-types@8.0.3':
-    resolution: {integrity: sha512-fXW1zfZ0DH4/CM87RgRcr3grwhPAaewAdbhLlUwH/rGQtvnQjNEmCTWXdpq0NNctxWzH/o+PRUHA1XNX1YEm8A==}
+  '@bradleyhodges/sfsymbols-types@8.0.4':
+    resolution: {integrity: sha512-7EvUtvX64zA6xGhX0CuhaOvBXQu6M5j0gBqoCtAORe4wGuIiqcieodYJaRCVD3Mp/aprK9h9szBgYl0SGP3i8w==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1558,7 +1558,7 @@ snapshots:
   '@biomejs/cli-win32-x64@1.9.4':
     optional: true
 
-  '@bradleyhodges/sfsymbols-types@8.0.3': {}
+  '@bradleyhodges/sfsymbols-types@8.0.4': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
