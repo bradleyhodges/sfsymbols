@@ -1,5 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { toIconName, validateIconNames } = require("./iconNames");
 const { generateCategories, readCategories } = require("./generateCategories");
 const { parse } = require("node-html-parser");
 const UglifyJS = require("uglify-js");
@@ -18,6 +19,16 @@ const { icons: sfIconFiles } = generateCategories({ inputDir });
 const allCategories = readCategories(
     fs.readFileSync(path.join(packageBaseDir, "./attr/categories.ts"), "utf8"),
 );
+
+// Category folders can share icons; build each unique symbol once.
+const sfSvgFiles = [...sfIconFiles.keys()].sort().map((name) => `${name}.svg`);
+
+// Discover Brand SVGs (inside the 'brands' sub-directory) – optional
+const brandSvgFiles = fs.existsSync(brandInputDir)
+    ? fs.readdirSync(brandInputDir).filter((file) => file.endsWith(".svg"))
+    : [];
+
+validateIconNames([...sfIconFiles.keys()], brandSvgFiles.map((file) => path.basename(file, ".svg")));
 
 // Output paths
 const preparedIconsOutputDir = path.join(packageSrcDir, "./");
@@ -58,14 +69,6 @@ const indexExports = [];
 
 // Will be initialised after reading directory listings
 
-// Convert to camelCase
-function toCamelCase(str) {
-    return str
-        .replace(/[-_.](.)/g, (_, group1) => group1.toUpperCase())
-        .replace(/^(\d)(.*)/, (_, firstDigit, rest) => `${firstDigit}${rest}`)
-        .replace(/^(.)/, (_, group1) => group1.toLowerCase());
-}
-
 // Function to extract modifiers from filename
 function parseFilename(filename) {
     const baseName = path.basename(filename, ".svg");
@@ -76,10 +79,6 @@ function parseFilename(filename) {
         ? `${styleCandidate}`
         : null;
     return { baseName, family, style };
-}
-
-function capitalizeFirstLetter(val) {
-    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 
 // Utility to build a stable identifier from a category name
@@ -163,8 +162,7 @@ function processSvg(filePath, outputFileName) {
     });
 
     const { baseName, family, style } = parseFilename(outputFileName);
-    const camelCaseName = toCamelCase(baseName);
-    const iconName = `sf${capitalizeFirstLetter(camelCaseName)}`;
+    const iconName = toIconName(baseName);
 
     // Get categories
     const categories = getCategories(baseName);
@@ -190,8 +188,8 @@ function processSvg(filePath, outputFileName) {
     // Generate the output TypeScript file content
     const outputContent = `import type { IconDefinition } from "@bradleyhodges/sfsymbols-types";
 const iconName: IconDefinition["iconName"] = "${iconName}";
-const sourceName: IconDefinition["sourceName"] = "${baseName}";
-const family: IconDefinition["family"] = "${family}";
+const sourceName: IconDefinition["sourceName"] = ${JSON.stringify(baseName)};
+const family: IconDefinition["family"] = ${JSON.stringify(family)};
 const style: IconDefinition["style"] = ${style ? `"${style}"` : null};
 const width: IconDefinition["width"] = ${widthValue};
 const height: IconDefinition["height"] = ${heightValue};
@@ -271,10 +269,7 @@ function processBrandSvg(filePath, fileName) {
 
     // Brand icon naming – camelCase with non-alphanumeric stripped, prefixed with 'sfBrand'
     const baseName = path.basename(fileName, ".svg");
-    const camelCaseName = toCamelCase(
-        baseName.replace(/[^a-zA-Z0-9-_\.]/g, "-"),
-    );
-    const iconName = `sfBrand${capitalizeFirstLetter(camelCaseName)}`;
+    const iconName = toIconName(baseName, true);
 
     // For brands we treat family as the base name (could be empty string if none)
     const family = baseName;
@@ -292,8 +287,8 @@ function processBrandSvg(filePath, fileName) {
     // Generate output TypeScript content
     const outputContent = `import type { IconDefinition } from "@bradleyhodges/sfsymbols-types";
 const iconName: IconDefinition["iconName"] = "${iconName}";
-const sourceName: IconDefinition["sourceName"] = "${baseName}";
-const family: IconDefinition["family"] = "${family}";
+const sourceName: IconDefinition["sourceName"] = ${JSON.stringify(baseName)};
+const family: IconDefinition["family"] = ${JSON.stringify(family)};
 const style: IconDefinition["style"] = null;
 const width: IconDefinition["width"] = ${widthValue};
 const height: IconDefinition["height"] = ${heightValue};
@@ -539,14 +534,6 @@ const populateGenericAliases = (iconName, mainAliases = []) => {
     return iconAliases;
 };
 
-// Category folders can share icons; build each unique symbol once.
-const sfSvgFiles = [...sfIconFiles.keys()].sort().map((name) => `${name}.svg`);
-
-// Discover Brand SVGs (inside the 'brands' sub-directory) – optional
-const brandSvgFiles = fs.existsSync(brandInputDir)
-    ? fs.readdirSync(brandInputDir).filter((file) => file.endsWith(".svg"))
-    : [];
-
 // Build a Set of all icon base names (without styles) for both SF and Brand icons
 const iconBaseNamesSet = new Set([
     ...sfSvgFiles.map((file) => parseFilename(file).baseName),
@@ -555,10 +542,10 @@ const iconBaseNamesSet = new Set([
 
 // Populate iconNameSet for existence checks (variants) – include correct prefixes
 for (const bn of sfSvgFiles.map((file) => parseFilename(file).baseName)) {
-    iconNameSet.add(`sf${capitalizeFirstLetter(toCamelCase(bn))}`);
+    iconNameSet.add(toIconName(bn));
 }
 for (const bn of brandSvgFiles.map((file) => path.basename(file, ".svg"))) {
-    iconNameSet.add(`sfBrand${capitalizeFirstLetter(toCamelCase(bn))}`);
+    iconNameSet.add(toIconName(bn, true));
 }
 
 // --- Process SF Symbol icons ---
