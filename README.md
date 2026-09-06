@@ -1,11 +1,11 @@
-# SF Symbols 7
-SF Symbols is a library of over 6,900 symbols that are designed to integrate seamlessly with San Francisco, the system font for Apple platforms.
+# SF Symbols 8
+SF Symbols is a library of over 7,000 symbols that are designed to integrate seamlessly with San Francisco, the system font for Apple platforms.
 
 > [!CAUTION]
 > SF Symbols is licensed by Apple for use only on Apple platforms. **Use of this package, or any of the other @bradleyhodges/sfsymbols-* packages, outside of Apple platforms is NOT permitted.**
 
 ## Version
-This package has been built using the latest icons from **Version 7.0 (beta)** – SF Font Version `20.0d10e1`.
+This package has been built using the latest icons from **Version 8.0 (135)** – SF Font Version `22.0d4e4`.
 
 ## Usage
 For simplicity, **I've created a basic icon browser for this package, which you can access here: [bradleyhodges-sfsymbols.vercel.app](https://bradleyhodges-sfsymbols.vercel.app)**

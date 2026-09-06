@@ -10,5 +10,5 @@ declare const categories: IconDefinition["categories"];
 declare const svgPathData: IconDefinition["svgPathData"];
 declare const variants: IconDefinition["variants"];
 declare const keywords: IconDefinition["keywords"];
-export declare const sfNumbersign: IconDefinition;
+export declare const sfNumberSign: IconDefinition;
 export { iconName, sourceName, family, style, width, height, viewBox, categories, svgPathData, variants, keywords };

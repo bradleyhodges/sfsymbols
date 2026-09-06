@@ -1,7 +1,7 @@
 {
     "name": "@bradleyhodges/sfsymbols",
     "description": "Apple's SF Symbols icons for React applications on Apple platforms.",
-    "version": "7.0.4",
+    "version": "8.0.2",
     "main": "dist/main/index.js",
     "module": "dist/module/index.js",
     "scripts": {
@@ -49,7 +49,7 @@
         "uglifyjs-folder": "^3.3.0"
     },
     "dependencies": {
-        "@bradleyhodges/sfsymbols-types": "7.0.4"
+        "@bradleyhodges/sfsymbols-types": "8.0.2"
     },
     "sideEffects": false,
     "files": ["dist/**", "README.md", "LICENSE", "CHANGELOG.md"]
