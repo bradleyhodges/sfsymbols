@@ -4,7 +4,7 @@ const { execSync } = require("node:child_process");
 const chalk = require("chalk");
 const ora = require("ora").default;
 const inquirer = require("inquirer").default;
-const esbuild = require("esbuild");
+const { minifyFiles, removeBuildDirectory } = require("./buildFiles");
 const decompress = require("decompress");
 const { extractFull } = require("node-7z");
 
@@ -23,39 +23,11 @@ const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 // Extract version
 let version = packageJson.version;
 
-// Function to remove a directory
+// Remove generated directories; failures propagate to the build error handler.
 const removeDir = async (dir) => {
-    await new Promise((resolve, reject) => {
-        spinner.start(`Deleting ${dir}...`);
-
-        if (fs.existsSync(dir)) {
-            try {
-                fs.rmSync(dir, { recursive: true, force: true });
-                spinner.succeed(`Deleted ${dir}`);
-                log(`🗑️ Deleted ${dir}`, "gray");
-
-                resolve(true);
-            } catch (error) {
-                log(
-                    `❌ Failed to delete ${dir}: ${error.message}. Trying again...`,
-                    "yellow",
-                );
-            }
-
-            try {
-                execSync(`rimraf ${dir}`, { stdio: "inherit" });
-                spinner.succeed(`Deleted ${dir}`);
-                log(`🗑️ Deleted ${dir}`, "gray");
-                resolve(true);
-            } catch (error) {
-                spinner.fail(`Failed to delete ${dir}`);
-                log(`❌ Failed to delete ${dir}: ${error.message}`, "red");
-                resolve(false);
-            }
-        } else {
-            resolve(true);
-        }
-    });
+    spinner.start(`Deleting ${dir}...`);
+    await removeBuildDirectory(dir, path.resolve(__dirname, "../.."));
+    spinner.succeed(`Deleted ${dir}`);
 };
 
 // Prompt user to confirm version increment
@@ -78,32 +50,6 @@ const promptVersion = async () => {
             "utf8",
         );
         log(`Updated package.json to version ${version}`, "yellow");
-    }
-};
-
-// Function to minify JavaScript files
-const minifyFiles = async (inputDir, format) => {
-    const files = fs.readdirSync(inputDir);
-
-    for (const file of files) {
-        const filePath = path.join(inputDir, file);
-        const stat = fs.statSync(filePath);
-
-        if (stat.isDirectory()) {
-            // Recursively minify files in subdirectories
-            await minifyFiles(filePath, format);
-        } else if (file.endsWith(".js")) {
-            // Minify JavaScript files
-            await esbuild.build({
-                entryPoints: [filePath],
-                outfile: filePath, // Overwrite the original file
-                minify: true,
-                format, // Use the correct format (esm or cjs)
-                sourcemap: false, // Disable sourcemaps
-                allowOverwrite: true,
-                treeShaking: true, // Ensure tree shaking is enabled
-            });
-        }
     }
 };
 
@@ -313,14 +259,6 @@ const build = async () => {
     execSync("tsc -p tsconfig.main.json", { stdio: "inherit" });
     spinner.succeed("Compiled TypeScript (CommonJS)");
 
-    // Mangle and minify the source files in /dist
-    spinner.start("Compressing build output...");
-    execSync(
-        "pnpm uglifyjs-folder ../../dist --each -x .js  -o ../../dist --compress --mangle",
-        { stdio: "inherit" },
-    );
-    spinner.succeed("Compressed build output");
-
     // Minify ESM files in /dist/module
     spinner.start("Minifying ESM files...");
     await minifyFiles(path.resolve(__dirname, "../../dist/module"), "esm");
@@ -349,4 +287,7 @@ const build = async () => {
 };
 
 // Run the build function
-build();
+build().catch((error) => {
+    spinner.fail(`Build failed: ${error.message}`);
+    process.exitCode = 1;
+});
