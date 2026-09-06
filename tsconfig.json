@@ -9,6 +9,7 @@
         /* Strictness */
         "strict": true,
         "noImplicitOverride": true,
+        "rootDir": "src",
         "module": "preserve",
         "outDir": "dist/module",
         "sourceMap": false,
