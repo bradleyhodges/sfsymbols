@@ -1,9 +1,9 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { generateCategories, readCategories } = require("./generateCategories");
 const { parse } = require("node-html-parser");
 const UglifyJS = require("uglify-js");
 const { optimize: svgoOptimize } = require("svgo");
-require("ts-node/register");
 
 // Input paths
 const inputDir = path.join(__dirname, "../src/src"); //Location of the svg files exported from SF Symbols on macOS
@@ -13,9 +13,10 @@ const brandInputDir = path.join(inputDir, "brands");
 const packageBaseDir = path.join(__dirname, "../../");
 const packageSrcDir = path.join(packageBaseDir, "./src");
 
-// Load categories data from the TypeScript source
-const { categories: allCategories } = require(
-    path.join(packageBaseDir, "./attr/categories.ts"),
+// Validate and regenerate categories before touching generated icon outputs.
+const { icons: sfIconFiles } = generateCategories({ inputDir });
+const allCategories = readCategories(
+    fs.readFileSync(path.join(packageBaseDir, "./attr/categories.ts"), "utf8"),
 );
 
 // Output paths
@@ -538,10 +539,8 @@ const populateGenericAliases = (iconName, mainAliases = []) => {
     return iconAliases;
 };
 
-// Discover SF Symbol SVGs (top-level .svg files)
-const sfSvgFiles = fs
-    .readdirSync(inputDir)
-    .filter((file) => file.endsWith(".svg"));
+// Category folders can share icons; build each unique symbol once.
+const sfSvgFiles = [...sfIconFiles.keys()].sort().map((name) => `${name}.svg`);
 
 // Discover Brand SVGs (inside the 'brands' sub-directory) – optional
 const brandSvgFiles = fs.existsSync(brandInputDir)
@@ -564,7 +563,7 @@ for (const bn of brandSvgFiles.map((file) => path.basename(file, ".svg"))) {
 
 // --- Process SF Symbol icons ---
 for (const file of sfSvgFiles) {
-    const filePath = path.join(inputDir, file);
+    const filePath = sfIconFiles.get(path.basename(file, ".svg"));
     processSvg(filePath, file);
 }
 
