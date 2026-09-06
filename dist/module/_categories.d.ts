@@ -6,6 +6,7 @@ declare let uniqueCategories: {
     accessibility: string[];
     arrows: string[];
     automotive: string[];
+    brands: string[];
     camera__photos: string[];
     commerce: string[];
     communication: string[];
