@@ -4,7 +4,8 @@ const { execSync } = require("node:child_process");
 const chalk = require("chalk");
 const ora = require("ora").default;
 const inquirer = require("inquirer").default;
-const { minifyFiles, removeBuildDirectory } = require("./buildFiles");
+const { removeBuildDirectory } = require("./buildFiles");
+const { buildPackage } = require("./buildPackage");
 const decompress = require("decompress");
 const { extractFull } = require("node-7z");
 
@@ -246,28 +247,10 @@ const build = async () => {
         `Updated @bradleyhodges/sfsymbols package versions to new version ${version}`,
     );
 
-    // Clean the dist directory
-    spinner.start("Cleaning the dist directory...");
-    await removeDir(path.resolve(__dirname, "../../dist"));
-    spinner.succeed("Cleaned the dist directory");
-
-    // Compile TypeScript code
-    spinner.start("Compiling TypeScript (ESM)...");
-    execSync("tsc", { stdio: "inherit" });
-    spinner.succeed("Compiled TypeScript (ESM)");
-    spinner.start("Compiling TypeScript (CommonJS)...");
-    execSync("tsc -p tsconfig.main.json", { stdio: "inherit" });
-    spinner.succeed("Compiled TypeScript (CommonJS)");
-
-    // Minify ESM files in /dist/module
-    spinner.start("Minifying ESM files...");
-    await minifyFiles(path.resolve(__dirname, "../../dist/module"), "esm");
-    spinner.succeed("Minified ESM files");
-
-    // Minify CJS files in /dist/main
-    spinner.start("Minifying CJS files...");
-    await minifyFiles(path.resolve(__dirname, "../../dist/main"), "cjs");
-    spinner.succeed("Minified CJS files");
+    // Compile and validate staged outputs before replacing the current distribution.
+    spinner.start("Building package outputs...");
+    await buildPackage();
+    spinner.succeed("Built and validated package outputs");
 
     // Delete the /src folder again after build
     if (fs.existsSync(appSrcDir)) {

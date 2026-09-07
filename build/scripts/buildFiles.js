@@ -66,6 +66,7 @@ async function minifyFiles(directory, format) {
                     loader: "js",
                     sourcefile: file,
                     minify: true,
+                    target: "es2015",
                     format,
                     sourcemap: false,
                     treeShaking: true,

@@ -1,7 +1,8 @@
-declare let uniqueCategories: {
+export declare const uniqueCategories: {
     key: string;
     name: string;
-}[], categoryMappings: {
+}[];
+export declare const categoryMappings: {
     whats_new: string[];
     accessibility: string[];
     arrows: string[];
@@ -34,4 +35,3 @@ declare let uniqueCategories: {
     variable: string[];
     weather: string[];
 };
-export { uniqueCategories, categoryMappings };

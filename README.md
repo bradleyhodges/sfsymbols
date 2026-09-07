@@ -24,12 +24,30 @@ You can then import the icons in your project like so:
 
 ```tsx
 import { SFIcon } from '@bradleyhodges/sfsymbols-react';
-import { arrowUpCircleFill } from '@bradleyhodges/sfsymbols';
+import { sfArrowUpCircleFill } from '@bradleyhodges/sfsymbols';
 
 ...
 
-<SFIcon icon={arrowUpCircleFill} />
+<SFIcon icon={sfArrowUpCircleFill} />
 ```
+
+For faster module resolution, you can also import individual icons directly. This is optional; existing root imports remain supported and tree-shake in ESM builds.
+
+```tsx
+import { sfArrowUpCircleFill } from '@bradleyhodges/sfsymbols/sfArrowUpCircleFill';
+```
+
+CommonJS consumers can use the same per-icon path with `require()`. This keeps bundles focused on the selected icon. Root CommonJS imports load icon definitions when their exports are accessed, but bundlers may still include the whole catalogue.
+
+## Building
+
+- `pnpm build-icons` generates TypeScript definitions from the locally supplied SVG archive.
+- `pnpm build-package` compiles generated `src` into validated ESM, CommonJS, and declaration outputs.
+- `pnpm build-package --from-dist` rebuilds an existing distribution without the SVG archive. It verifies both formats agree, preserves SVG data and metadata, and restores curated search aliases. Repeated runs do not accumulate aliases.
+- `pnpm build` retains the interactive archive/version workflow and uses the same package emitter.
+- `pnpm test` runs build regression tests; `pnpm typecheck` checks generated source and shipped declarations, including archive-free checkouts.
+
+Package emission stages and validates all outputs before replacing `dist`. A failed replacement restores the previous distribution; if restoration is blocked, the error identifies the retained backup directory. Original SVG generation still requires your own source archive.
 
 > [!NOTE]
 > This repository contains the scripts necessary to build the icons and their respective React components. However, due to Apple's licensing terms, I have not included the actual icon archive in this repository, and I will not provide it upon request. This is to respect Apple's licensing terms, prevent any unauthorised use of the icons, and to avoid any legal issues.
