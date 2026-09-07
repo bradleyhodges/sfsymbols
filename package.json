@@ -8,6 +8,7 @@
     "build-icons": "node build/scripts/buildIcons.js",
     "build": "node build/scripts/build.js",
     "pub": "npm publish --access public --no-git-checks",
+				"pub-rc": "npm publish --access public --tag rc --no-git-checks",
     "bumpver-rc": "npm version prerelease --preid=rc",
     "bump-deps": "npx npm-check-updates --deep -u -x chalk,@biomejs/biome,ora && pnpm up --latest --recursive && pnpm run format",
     "format": "biome check . --write --skip-errors",
