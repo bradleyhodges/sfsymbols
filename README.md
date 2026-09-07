@@ -30,9 +30,9 @@
 <p align="center">SF Symbols is a library of over 7,000 symbols that are designed to integrate seamlessly with San Francisco, the system font for Apple platforms.</p>
 
 <p align="center">
-    <a href="#-features-of-this-library">Features</a>
-  • <a href="#-version">Version</a>
-  • <a href="#-available-icons">Available Icons</a>
+    <a href="#features-of-this-library">Features</a>
+  • <a href="#version">Version</a>
+  • <a href="#available-icons">Available Icons</a>
   • <a href="#-getting-started">🚀 Getting Started</a>
   • <a href="#install-the-packages">Install</a>
   • <a href="#usage">Usage</a>
@@ -42,7 +42,7 @@
 </p>
 </div>
 
-## ⚙️ Features of this Library
+## Features of this Library
 
 - **8,111 Symbols** - Contains the entire SF Symbols 8 (beta) icon library, plus an additional 609 supplementary brand icons
 - **Tree-Shakeable** - Each icon can be imported as a standalone component (<1 KB each) or as a bundled import
@@ -50,10 +50,10 @@
 - **Lightweight** - Only imported icons end up in your bundle
 - **React 18/19** - Works with the latest version of React
 
-## 8️⃣ Version
+## 8️Version
 This package has been built using the latest icons from **Version 8.0 (135)** – SF Font Version `22.0d4e4`.
 
-## 📙 Available Icons
+## Available Icons
 This package contains 8,111 icons, which includes 609 supplementary brand icons. All 7,502 of the `Regular` weight icons from the [San Francisco font](https://github.com/bradleyhodges/SFWindows) are included. Other weights are not included in this package, but the icon weights can be made heavier by applying a stroke to the vector paths.
 
 For simplicity, **I've created a basic icon browser for this package, which you can access here: [bradleyhodges-sfsymbols.vercel.app](https://bradleyhodges-sfsymbols.vercel.app)**
