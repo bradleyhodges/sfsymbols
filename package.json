@@ -1,14 +1,14 @@
 {
   "name": "@bradleyhodges/sfsymbols",
   "description": "Apple's SF Symbols icons for React applications on Apple platforms.",
-  "version": "8.1.0",
+  "version": "8.1.1-rc.0",
   "main": "dist/main/index.js",
   "module": "dist/module/index.js",
   "scripts": {
     "build-icons": "node build/scripts/buildIcons.js",
     "build": "node build/scripts/build.js",
     "pub": "npm publish --access public --no-git-checks",
-				"pre-pub": "npm version prerelease --preid=rc",
+    "pre-pub": "npm version prerelease --preid=rc",
     "bump-deps": "npx npm-check-updates --deep -u -x chalk,@biomejs/biome,ora && pnpm up --latest --recursive && pnpm run format",
     "format": "biome check . --write --skip-errors",
     "clean": "git clean -xdf .cache .turbo node_modules -f",
