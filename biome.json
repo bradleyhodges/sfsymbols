@@ -74,6 +74,7 @@
             "**/dist",
             "**/src",
             "**/build",
+            "**/build-out",
             "**/.next",
             "**/.basehub",
             "**/.vercel",
