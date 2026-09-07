@@ -6,24 +6,20 @@
 <h3>Apple's SF Symbols icons for building React/Typescript applications on Apple platforms.</h3>
 
 <p align="center">
-    <a href="#">
-				<img alt="NPM Downloads by package author" src="https://img.shields.io/npm-stat/dm/bradleyhodges">
-    </a>
+<img alt="NPM Downloads by package author" src="https://img.shields.io/npm-stat/dm/bradleyhodges" />
     <a href="https://www.npmjs.com/package/@bradleyhodges/sfsymbols">
-				<img src="https://img.shields.io/badge/npmjs-package-red?logo=npm" alt="npmjs package">
+				<img src="https://img.shields.io/badge/npmjs-package-red?logo=npm" alt="npmjs package" />
     </a>
     <a href="https://github.com/bradleyhodges/sfsymbols">
-				<img src="https://img.shields.io/badge/github-repo-blue?logo=github" alt="GitHub repo">
+				<img src="https://img.shields.io/badge/github-repo-blue?logo=github" alt="GitHub repo" />
     </a>
     <br />
     <a href="https://github.com/bradleyhodges/sfsymbols/releases">
-				<img src="https://img.shields.io/badge/version-8.1.1-blue.svg" alt="Version: 8.1.1">
+				<img src="https://img.shields.io/badge/version-8.1.1-blue.svg" alt="Version: 8.1.1" />
     </a>
-    <a href="#">
-    <img src="https://img.shields.io/badge/Platforms-iOS%20|%20tvOS%20|%20watchOS%20|%20macOS-FF69B4.svg" alt="Platforms: iOS – tvOS – watchOS – macOS">
-    </a>
+    <img src="https://img.shields.io/badge/Platforms-iOS%20|%20tvOS%20|%20watchOS%20|%20macOS-FF69B4.svg" alt="Platforms: iOS – tvOS – watchOS – macOS" />
     <a href="https://github.com/bradleyhodges/sfsymbols/blob/stable/LICENSE">
-				<img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" alt="License: MIT">
+				<img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" alt="License: MIT" />
     </a>
 </p>
 
