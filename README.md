@@ -57,7 +57,7 @@ For simplicity, **I've created a basic icon browser for this package, which you 
 
 ## 🚀 Getting Started
 
-This package features the actual icons and icon data for SF Symbols 8. To use these icons in React applications, you can make use of the [`sfsymbols-react companion package`](https://www.npmjs.com/package/@bradleyhodges/sfsymbols-react), which exposes a convenient, easy-to-use React component for SF Symbols 8 icons.
+This package features the actual icons and icon data for SF Symbols 8. To use these icons in React applications, you can make use of the [`sfsymbols-react` companion package](https://www.npmjs.com/package/@bradleyhodges/sfsymbols-react), which exposes a convenient, easy-to-use React component for SF Symbols 8 icons.
 
 ### Install the Packages
 
