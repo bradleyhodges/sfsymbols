@@ -36,7 +36,7 @@
   • <a href="#-getting-started">🚀 Getting Started</a>
   • <a href="#install-the-packages">Install</a>
   • <a href="#usage">Usage</a>
-  • <a href="#building">Buildiung</a>
+  • <a href="#building">Building</a>
   • <a href="https://github.com/bradleyhodges/sfsymbols/issues">Issues</a>
   • <a href="https://github.com/bradleyhodges/sfsymbols/pulls">Pull Requests</a>
 </p>
