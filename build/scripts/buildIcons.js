@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { toIconName, validateIconNames } = require("./iconNames");
+const { emitIconSource, readAliases } = require("./iconData");
 const { generateCategories, readCategories } = require("./generateCategories");
 const { parse } = require("node-html-parser");
 const UglifyJS = require("uglify-js");
@@ -13,6 +14,7 @@ const brandInputDir = path.join(inputDir, "brands");
 // Base package (this npm package) directory
 const packageBaseDir = path.join(__dirname, "../../");
 const packageSrcDir = path.join(packageBaseDir, "./src");
+const aliases = readAliases(path.join(packageBaseDir, "attr/aliases.ts"));
 
 // Validate and regenerate categories before touching generated icon outputs.
 const { icons: sfIconFiles } = generateCategories({ inputDir });
@@ -135,8 +137,7 @@ function processSvg(filePath, outputFileName) {
     const svgRoot = parse(contentOptimised).querySelector("svg");
 
     if (!svgRoot) {
-        console.error(`No <svg> tag found in ${filePath}`);
-        return;
+        throw new Error(`No <svg> tag found in ${filePath}`);
     }
 
     const { width, height, viewBox } = svgRoot.attributes || {};
@@ -170,51 +171,25 @@ function processSvg(filePath, outputFileName) {
     // Get variants
     const variants = populateVariants(iconName);
 
-    // Retrieve aliases (best-effort – ignore if file not present or not parsable)
-    let iconAliases = [];
-    try {
-        const aliasesPath = path.join(__dirname, "../attr/aliases");
-        // eslint-disable-next-line global-require, import/no-dynamic-require
-        const aliasesModule = require(aliasesPath);
-        const aliasesObj = aliasesModule.aliases || aliasesModule.default || {};
-        iconAliases = aliasesObj[iconName] || [];
-    } catch (_) {
-        // No aliases available – continue gracefully
-    }
+    const iconAliases = aliases[iconName] || [];
 
     // Get aliases
     const keywords = populateGenericAliases(iconName, iconAliases);
 
     // Generate the output TypeScript file content
-    const outputContent = `import type { IconDefinition } from "@bradleyhodges/sfsymbols-types";
-const iconName: IconDefinition["iconName"] = "${iconName}";
-const sourceName: IconDefinition["sourceName"] = ${JSON.stringify(baseName)};
-const family: IconDefinition["family"] = ${JSON.stringify(family)};
-const style: IconDefinition["style"] = ${style ? `"${style}"` : null};
-const width: IconDefinition["width"] = ${widthValue};
-const height: IconDefinition["height"] = ${heightValue};
-const viewBox: IconDefinition["viewBox"] = "${viewBox}";
-const categories: IconDefinition["categories"] = ${JSON.stringify(categories)};
-const svgPathData: IconDefinition["svgPathData"] = ${JSON.stringify(svgPathData)};
-const variants: IconDefinition["variants"] = ${JSON.stringify(variants)};
-const keywords: IconDefinition["keywords"] = ${JSON.stringify(keywords)};
-
-export const ${iconName}: IconDefinition = {
-  iconName,
-  sourceName,
-  family,
-  style,
-  width,
-  height,
-  viewBox,
-  categories,
-  svgPathData,
-  variants,
-  keywords
-};
-
-export { iconName, sourceName, family, style, width, height, viewBox, categories, svgPathData, variants, keywords };
-`;
+    const outputContent = emitIconSource({
+        iconName,
+        sourceName: baseName,
+        family,
+        style,
+        width: widthValue,
+        height: heightValue,
+        viewBox,
+        categories,
+        svgPathData,
+        variants,
+        keywords,
+    });
 
     // Write to output file
     const outputPath = path.join(preparedIconsOutputDir, `${iconName}.ts`);
@@ -222,7 +197,7 @@ export { iconName, sourceName, family, style, width, height, viewBox, categories
     console.log(`Generated: ${outputPath}`);
 
     // Queue barrel export – will be written once at the end
-    indexExports.push(`export { ${iconName} } from "./${iconName}";`);
+    indexExports.push(`export { ${iconName} } from "./${iconName}.js";`);
 
     // Add to mapping
     iconMapping[baseName] = iconName;
@@ -247,8 +222,7 @@ function processBrandSvg(filePath, fileName) {
 
     const svgRoot = parse(contentOptimised).querySelector("svg");
     if (!svgRoot) {
-        console.error(`No <svg> tag found in ${filePath}`);
-        return;
+        throw new Error(`No <svg> tag found in ${filePath}`);
     }
 
     const { width, height, viewBox } = svgRoot.attributes || {};
@@ -285,35 +259,19 @@ function processBrandSvg(filePath, fileName) {
     const categories = [toCategoryId("Brands")];
 
     // Generate output TypeScript content
-    const outputContent = `import type { IconDefinition } from "@bradleyhodges/sfsymbols-types";
-const iconName: IconDefinition["iconName"] = "${iconName}";
-const sourceName: IconDefinition["sourceName"] = ${JSON.stringify(baseName)};
-const family: IconDefinition["family"] = ${JSON.stringify(family)};
-const style: IconDefinition["style"] = null;
-const width: IconDefinition["width"] = ${widthValue};
-const height: IconDefinition["height"] = ${heightValue};
-const viewBox: IconDefinition["viewBox"] = "${viewBox}";
-const categories: IconDefinition["categories"] = ${JSON.stringify(categories)};
-const svgPathData: IconDefinition["svgPathData"] = ${JSON.stringify(svgPathData)};
-const variants: IconDefinition["variants"] = ${JSON.stringify(variants)};
-const keywords: IconDefinition["keywords"] = ${JSON.stringify(keywords)};
-
-export const ${iconName}: IconDefinition = {
-  iconName,
-  sourceName,
-  family,
-  style,
-  width,
-  height,
-  viewBox,
-  categories,
-  svgPathData,
-  variants,
-  keywords
-};
-
-export { iconName, sourceName, family, style, width, height, viewBox, categories, svgPathData, variants, keywords };
-`;
+    const outputContent = emitIconSource({
+        iconName,
+        sourceName: baseName,
+        family,
+        style,
+        width: widthValue,
+        height: heightValue,
+        viewBox,
+        categories,
+        svgPathData,
+        variants,
+        keywords,
+    });
 
     // Write out the generated file
     const outputPath = path.join(preparedIconsOutputDir, `${iconName}.ts`);
@@ -321,7 +279,7 @@ export { iconName, sourceName, family, style, width, height, viewBox, categories
     console.log(`Generated (brand): ${outputPath}`);
 
     // Export via barrel file
-    indexExports.push(`export { ${iconName} } from "./${iconName}";`);
+    indexExports.push(`export { ${iconName} } from "./${iconName}.js";`);
 
     // Add to mapping
     iconMapping[baseName] = iconName;

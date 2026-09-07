@@ -1,26 +1,52 @@
 {
     "name": "@bradleyhodges/sfsymbols",
     "description": "Apple's SF Symbols icons for React applications on Apple platforms.",
-    "version": "8.0.4",
+    "version": "8.1.1-rc.0",
     "main": "dist/main/index.js",
     "module": "dist/module/index.js",
     "scripts": {
         "build-icons": "node build/scripts/buildIcons.js",
         "build": "node build/scripts/build.js",
         "pub": "npm publish --access public --no-git-checks",
+        "pub-rc": "npm publish --access public --tag rc --no-git-checks",
+        "bumpver-rc": "npm version prerelease --preid=rc",
         "bump-deps": "npx npm-check-updates --deep -u -x chalk,@biomejs/biome,ora && pnpm up --latest --recursive && pnpm run format",
         "format": "biome check . --write --skip-errors",
         "clean": "git clean -xdf .cache .turbo node_modules -f",
-        "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+        "typecheck": "tsc -p tsconfig.check.json",
+        "build-package": "node build/scripts/buildPackage.js",
+        "test": "node --test build/scripts/*.test.js"
     },
     "exports": {
         ".": {
-            "import": "./dist/module/index.js",
-            "require": "./dist/main/index.js"
+            "import": {
+                "types": "./dist/module/index.d.ts",
+                "default": "./dist/module/index.js"
+            },
+            "require": {
+                "types": "./dist/main/index.d.ts",
+                "default": "./dist/main/index.js"
+            }
         },
         "./categories": {
-            "import": "./dist/module/_categories.js",
-            "require": "./dist/main/_categories.js"
+            "import": {
+                "types": "./dist/module/_categories.d.ts",
+                "default": "./dist/module/_categories.js"
+            },
+            "require": {
+                "types": "./dist/main/_categories.d.ts",
+                "default": "./dist/main/_categories.js"
+            }
+        },
+        "./sf*": {
+            "import": {
+                "types": "./dist/module/sf*.d.ts",
+                "default": "./dist/module/sf*.js"
+            },
+            "require": {
+                "types": "./dist/main/sf*.d.ts",
+                "default": "./dist/main/sf*.js"
+            }
         }
     },
     "repository": "https://github.com/bradleyhodges/sfsymbols",
@@ -52,5 +78,6 @@
         "@bradleyhodges/sfsymbols-types": "8.0.4"
     },
     "sideEffects": false,
-    "files": ["dist/**", "README.md", "LICENSE", "CHANGELOG.md"]
+    "files": ["dist/**", "README.md", "LICENSE", "CHANGELOG.md"],
+    "types": "dist/main/index.d.ts"
 }
