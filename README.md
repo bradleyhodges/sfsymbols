@@ -20,7 +20,7 @@
 				<img src="https://img.shields.io/badge/version-8.1.1-blue.svg" alt="Version: 8.1.1" />
     </a>
 				<a href="">
-    <img src="https://img.shields.io/badge/Platforms-iOS%20|%20tvOS%20|%20watchOS%20|%20macOS-FF69B4.svg" alt="Platforms: iOS – tvOS – watchOS – macOS" />
+    <img src="https://img.shields.io/badge/Platforms-Next.js%20|%20React.js%20|%20React%20Native-FF69B4.svg" alt="Platforms: Next.js – React.js – React Nav" />
 				</a>
     <a href="https://github.com/bradleyhodges/sfsymbols/blob/stable/LICENSE">
 				<img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" alt="License: MIT" />

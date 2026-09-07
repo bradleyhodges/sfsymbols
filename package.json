@@ -75,7 +75,7 @@
         "uglifyjs-folder": "^3.3.0"
     },
     "dependencies": {
-        "@bradleyhodges/sfsymbols-types": "8.0.4"
+        "@bradleyhodges/sfsymbols-types": "8.1.1"
     },
     "sideEffects": false,
     "files": ["dist/**", "README.md", "LICENSE", "CHANGELOG.md"],
