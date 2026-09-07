@@ -75,7 +75,7 @@ You will need to install the following packages to use the icons in your project
 ### Usage
 
 > [!CAUTION]
-> SF Symbols is licensed by Apple for use only on Apple platforms. **Use of this package, or any of the other @bradleyhodges/sfsymbols-* packages, outside of Apple platforms is NOT permitted. More info: [Xcode and Apple SDKs Agreement](https://www.apple.com/legal/sla/docs/xcode.pdf#page=6&search=System-Provided%20Images) **
+> SF Symbols is licensed by Apple for use only on Apple platforms. **Use of this package, or any of the other @bradleyhodges/sfsymbols-* packages, outside of Apple platforms is NOT permitted.** More info: [Xcode and Apple SDKs Agreement](https://www.apple.com/legal/sla/docs/xcode.pdf#page=6&search=System-Provided%20Images)
 
 ```bash
 pnpm add @bradleyhodges/sfsymbols@latest @bradleyhodges/sfsymbols-react@latest @bradleyhodges/sfsymbols-types@latest
