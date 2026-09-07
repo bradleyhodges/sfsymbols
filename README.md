@@ -49,5 +49,7 @@ CommonJS consumers can use the same per-icon path with `require()`. This keeps b
 
 Package emission stages and validates all outputs before replacing `dist`. A failed replacement restores the previous distribution; if restoration is blocked, the error identifies the retained backup directory. Original SVG generation still requires your own source archive.
 
+The full `pnpm build` workflow keeps the unpacked SVGs in `build/src` and generated TypeScript in `src` through version updates, compilation, minification, and output validation. Cleanup runs only after those steps succeed, with the original SVG inputs removed last. Package-version files use temporary-file replacement with bounded retries for Windows locks; files already at the requested version are left untouched.
+
 > [!NOTE]
 > This repository contains the scripts necessary to build the icons and their respective React components. However, due to Apple's licensing terms, I have not included the actual icon archive in this repository, and I will not provide it upon request. This is to respect Apple's licensing terms, prevent any unauthorised use of the icons, and to avoid any legal issues.

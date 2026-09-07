@@ -4,7 +4,7 @@ const { execSync } = require("node:child_process");
 const chalk = require("chalk");
 const ora = require("ora").default;
 const inquirer = require("inquirer").default;
-const { removeBuildDirectory } = require("./buildFiles");
+const { removeBuildDirectory, writeFileAtomically } = require("./buildFiles");
 const { buildPackage } = require("./buildPackage");
 const decompress = require("decompress");
 const { extractFull } = require("node-7z");
@@ -45,10 +45,9 @@ const promptVersion = async () => {
     if (answers.version !== version) {
         version = answers.version;
         packageJson.version = version;
-        fs.writeFileSync(
+        await writeFileAtomically(
             packageJsonPath,
-            JSON.stringify(packageJson, null, 2),
-            "utf8",
+            `${JSON.stringify(packageJson, null, 2)}\n`,
         );
         log(`Updated package.json to version ${version}`, "yellow");
     }
@@ -139,84 +138,61 @@ const unpackArchive = async () => {
 
 // Function for updating all sfsymbols package versions to the given version
 const updateAllPackageVersions = async (version) => {
-    await new Promise((resolve, reject) => {
-        // Define the package root directories
-        const packageRootDirectories = [
-            path.resolve(__dirname, "../../../icons"),
-            path.resolve(__dirname, "../../../react"),
-            path.resolve(__dirname, "../../../types"),
-        ];
+    const packageRootDirectories = [
+        path.resolve(__dirname, "../../../icons"),
+        path.resolve(__dirname, "../../../react"),
+        path.resolve(__dirname, "../../../types"),
+    ];
 
-        // Update the package.json version for each package
-        for (const packageRoot of packageRootDirectories) {
-            // Update the package.json version
-            const packageJsonPath = path.resolve(packageRoot, "package.json");
-            if (fs.existsSync(packageJsonPath)) {
-                // Read the package.json file
-                const packageJson = JSON.parse(
-                    fs.readFileSync(packageJsonPath, "utf8"),
+    for (const packageRoot of packageRootDirectories) {
+        const packageJsonPath = path.resolve(packageRoot, "package.json");
+        if (fs.existsSync(packageJsonPath)) {
+            const packageJson = JSON.parse(
+                fs.readFileSync(packageJsonPath, "utf8"),
+            );
+            const updates = [];
+            if (packageJson.version !== version) {
+                updates.push(
+                    `Updated ${packageJson.name} from version ${packageJson.version} to ${version}`,
                 );
-                const currentVersion = packageJson.version;
-
-                // Update the version
                 packageJson.version = version;
-
-                // Log the update
-                log(
-                    `Updated ${packageJson.name} package.json from version ${currentVersion} to current version ${version}`,
-                    "yellow",
-                );
-
-                // Update the dependencies
-                if (packageJson.dependencies) {
-                    for (const [
-                        dependency,
-                        dependencyVersion,
-                    ] of Object.entries(packageJson.dependencies)) {
-                        if (dependency.startsWith("@bradleyhodges/sfsymbols")) {
-                            const currentVersion =
-                                packageJson.dependencies[dependency];
-
-                            // Update the version
-                            packageJson.dependencies[dependency] = version;
-
-                            // Log the update
-                            log(
-                                `Updated ${dependency} from version ${currentVersion} to current version ${version}`,
-                                "yellow",
-                            );
-                        }
-                    }
-                }
-
-                // Write the updated package.json file
-                fs.writeFileSync(
-                    packageJsonPath,
-                    JSON.stringify(packageJson, null, 2),
-                    "utf8",
-                );
-
-                // Log the update
-                log(`Updated ${packageJson.name} package.json`, "yellow");
-            } else {
-                log(`No package.json found in ${packageRoot}`, "orange");
             }
+            for (const [dependency, currentVersion] of Object.entries(
+                packageJson.dependencies || {},
+            )) {
+                if (
+                    dependency.startsWith("@bradleyhodges/sfsymbols") &&
+                    currentVersion !== version
+                ) {
+                    packageJson.dependencies[dependency] = version;
+                    updates.push(
+                        `Updated ${dependency} from version ${currentVersion} to ${version}`,
+                    );
+                }
+            }
+            if (updates.length) {
+                await writeFileAtomically(
+                    packageJsonPath,
+                    `${JSON.stringify(packageJson, null, 2)}\n`,
+                );
+                for (const message of updates) log(message, "yellow");
+            }
+        } else {
+            log(`No package.json found in ${packageRoot}`, "yellow");
+        }
 
-            // Update the version.ts in the src/ directory
-            const versionTsPath = path.resolve(packageRoot, "src/version.ts");
-            if (fs.existsSync(versionTsPath)) {
-                const versionTsContent = `export const VERSION = "${version}";\n`;
-                fs.writeFileSync(versionTsPath, versionTsContent, "utf8");
+        const versionTsPath = path.resolve(packageRoot, "src/version.ts");
+        if (fs.existsSync(versionTsPath)) {
+            const content = `export const VERSION = ${JSON.stringify(version)};\n`;
+            if (fs.readFileSync(versionTsPath, "utf8") !== content) {
+                await writeFileAtomically(versionTsPath, content);
                 log(
-                    `Updated version.ts in ${packageRoot} to current version ${version}`,
+                    `Updated version.ts in ${packageRoot} to ${version}`,
                     "yellow",
                 );
             }
         }
-
-        // Resolve the promise
-        resolve(true);
-    });
+    }
 };
 
 // Main build function
@@ -231,15 +207,6 @@ const build = async () => {
     execSync("node build/scripts/buildIcons.js", { stdio: "inherit" });
     spinner.succeed("Finished running build-icons script");
 
-    // Delete the /src folder
-    const buildSrcDir = path.resolve(__dirname, "../src");
-    const appSrcDir = path.resolve(__dirname, "../../src");
-    if (fs.existsSync(buildSrcDir)) {
-        spinner.start("Deleting build source folder (/build/src)...");
-        await removeDir(buildSrcDir);
-        spinner.succeed("Deleting build source folder");
-    }
-
     // Update version in version.ts
     spinner.start("Updating @bradleyhodges/sfsymbols package versions...");
     await updateAllPackageVersions(version);
@@ -252,12 +219,14 @@ const build = async () => {
     await buildPackage();
     spinner.succeed("Built and validated package outputs");
 
-    // Delete the /src folder again after build
+    // Keep raw SVGs and generated TypeScript until every build stage has succeeded.
+    const appSrcDir = path.resolve(__dirname, "../../src");
+    const buildSrcDir = path.resolve(__dirname, "../src");
     if (fs.existsSync(appSrcDir)) {
-        spinner.start("Deleting application source directory...");
         await removeDir(appSrcDir);
-        spinner.succeed("Deleting application source directory");
     }
+    // Remove the original inputs last, so an earlier cleanup failure still leaves them available.
+    if (fs.existsSync(buildSrcDir)) await removeDir(buildSrcDir);
 
     // Log completion message
     log("\n✅ All done! The build process completed successfully.");

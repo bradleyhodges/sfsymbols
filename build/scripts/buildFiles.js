@@ -20,6 +20,22 @@ async function retryFileOperation(operation) {
     }
 }
 
+/** Replace an existing file without truncating it while Windows readers may have it mapped. */
+async function writeFileAtomically(file, content) {
+    const { mode } = await fs.stat(file);
+    const temporary = `${file}.${randomUUID()}.tmp`;
+    try {
+        await fs.writeFile(temporary, content, {
+            encoding: "utf8",
+            flag: "wx",
+            mode,
+        });
+        await retryFileOperation(() => fs.rename(temporary, file));
+    } finally {
+        await retryFileOperation(() => fs.rm(temporary, { force: true }));
+    }
+}
+
 /** Remove only known generated directories within this package. Fail the build on error. */
 async function removeBuildDirectory(directory, packageRoot) {
     const target = path.resolve(directory);
@@ -94,4 +110,9 @@ async function minifyFiles(directory, format) {
     if (failed) throw failure;
 }
 
-module.exports = { minifyFiles, removeBuildDirectory, retryFileOperation };
+module.exports = {
+    minifyFiles,
+    removeBuildDirectory,
+    retryFileOperation,
+    writeFileAtomically,
+};

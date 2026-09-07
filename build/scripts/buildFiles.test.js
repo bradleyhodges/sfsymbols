@@ -7,6 +7,7 @@ const {
     minifyFiles,
     removeBuildDirectory,
     retryFileOperation,
+    writeFileAtomically,
 } = require("./buildFiles");
 
 async function fixture(t) {
@@ -14,6 +15,24 @@ async function fixture(t) {
     t.after(() => fs.rm(root, { recursive: true, force: true }));
     return root;
 }
+
+test("a failed manifest write preserves the original file and removes partial temporary data", async (t) => {
+    const root = await fixture(t);
+    const file = path.join(root, "package.json");
+    const original = '{"version":"1.0.0"}\n';
+    await fs.writeFile(file, original);
+    const writeFile = fs.writeFile;
+    t.mock.method(fs, "writeFile", async (temporary, content, options) => {
+        await writeFile(temporary, content.slice(0, 5), options);
+        throw Object.assign(new Error("disk full"), { code: "ENOSPC" });
+    });
+    await assert.rejects(
+        writeFileAtomically(file, '{"version":"2.0.0"}\n'),
+        /disk full/,
+    );
+    assert.equal(await fs.readFile(file, "utf8"), original);
+    assert.deepEqual(await fs.readdir(root), ["package.json"]);
+});
 
 test("cleanup succeeds once and tolerates an already absent output", async (t) => {
     const root = await fixture(t);
