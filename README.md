@@ -17,7 +17,7 @@
     </a>
     <br />
     <a href="https://github.com/bradleyhodges/sfsymbols/releases">
-				<img src="https://img.shields.io/badge/version-8.1.1-blue.svg" alt="Version: 8.1.1" />
+				<img src="https://img.shields.io/badge/version-8.1.3-blue.svg" alt="Version: 8.1.3" />
     </a>
 				<a href="">
     <img src="https://img.shields.io/badge/Platforms-Next.js%20|%20React.js%20|%20React%20Native-FF69B4.svg" alt="Platforms: Next.js – React.js – React Nav" />
